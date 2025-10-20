@@ -1,21 +1,41 @@
-class NaveDeCarga {
+//superclase
 
-	var velocidad = 0
+class Nave {
+	var property velocidad = 0
+
+	method recibirAmenaza() {}
+
+	method propulsar() { 
+		velocidad = (velocidad + 20000).min(300000)
+	}
+
+	method prepararseParaViaje() {
+
+		velocidad = (velocidad + 15000).min(300000)
+	}
+
+	method encontrarEnemigo() {
+		self.recibirAmenaza()
+		self.propulsar()
+	}
+}
+
+class NaveDeCarga inherits Nave {
+
 	var property carga = 0
 
 	method sobrecargada() = carga > 100000
 
 	method excedidaDeVelocidad() = velocidad > 100000
 
-	method recibirAmenaza() {
+	override method recibirAmenaza() {
 		carga = 0
 	}
 
 }
 
-class NaveDePasajeros {
+class NaveDePasajeros inherits Nave {
 
-	var velocidad = 0
 	var property alarma = false
 	const cantidadDePasajeros = 0
 
@@ -25,14 +45,14 @@ class NaveDePasajeros {
 
 	method estaEnPeligro() = velocidad > self.velocidadMaximaLegal() or alarma
 
-	method recibirAmenaza() {
+	override method recibirAmenaza() {
 		alarma = true
+
 	}
 
 }
 
-class NaveDeCombate {
-	var property velocidad = 0
+class NaveDeCombate inherits Nave {
 	var property modo = reposo
 	const property mensajesEmitidos = []
 
@@ -44,8 +64,13 @@ class NaveDeCombate {
 
 	method estaInvisible() = velocidad < 10000 and modo.invisible()
 
-	method recibirAmenaza() {
+	override method recibirAmenaza() {
 		modo.recibirAmenaza(self)
+	}
+
+	override method prepararseParaViaje() {
+		super()
+		modo.prepararseParaViaje(self)
 	}
 
 }
@@ -58,6 +83,11 @@ object reposo {
 		nave.emitirMensaje("¡RETIRADA!")
 	}
 
+	method prepararseParaViaje(nave) {
+		nave.emitirMensaje("Saliendo en mision")
+		nave.modo(ataque)
+	}
+
 }
 
 object ataque {
@@ -68,4 +98,31 @@ object ataque {
 		nave.emitirMensaje("Enemigo encontrado")
 	}
 
+	method prepararseParaViaje(nave) {
+		nave.emitirMensaje("Volviendo a la base")
+		nave.modo(ataque)
+	}
+
+}
+
+// Extendiendo el dominio
+
+class NaveDeCargaRadiactiva inherits NaveDeCarga {
+	var property sellada = false
+	
+	method sellarse() {
+		sellada = true
+	}
+
+	override method recibirAmenaza() {
+		if (sellada) {
+			velocidad = 0 }
+
+	} 
+
+	override method prepararseParaViaje(){
+		self.sellarse()
+		super()
+
+	}
 }

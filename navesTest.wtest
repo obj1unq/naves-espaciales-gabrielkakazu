@@ -26,6 +26,17 @@ describe "Nave de carga" {
 		assert.equals(0, naveVacia.carga())
 	}
 
+	test "propulsion" {
+		naveVacia.propulsar()
+		assert.equals(20000, naveVacia.velocidad())
+
+	}
+
+	test "prepararse para el viaje"{
+		assert.that(true)	
+
+	}
+
 }
 
 describe "Nave de pasajeros" {
@@ -53,6 +64,26 @@ describe "Nave de pasajeros" {
 		naveSinPasajeros.recibirAmenaza()
 		assert.that(naveSinPasajeros.alarma())
 	}
+
+	test "propulsarse" {
+		naveConPasajeros.propulsar()
+		assert.equals(300000, naveConPasajeros.velocidad())
+	}
+	test "prepararse para el viaje"{
+		naveConPasajeros.prepararseParaViaje()
+		assert.equals(300000, naveConPasajeros.velocidad())
+	}
+
+	test "encontrar enemigos" {
+		naveConPasajeros.velocidad(0)
+		naveConPasajeros.encontrarEnemigo()
+		assert.equals(20000, naveConPasajeros.velocidad())
+		assert.that(naveConPasajeros.alarma())
+
+		
+	}
+
+
 
 }
 
@@ -83,4 +114,43 @@ describe "Nave de combate" {
 		naveEnAtaque.recibirAmenaza()
 		assert.equals("Enemigo encontrado", naveEnAtaque.ultimoMensaje())
 	}
+
+	test "prepararse para el viaje"{
+		naveEnAtaque.prepararseParaViaje()
+		assert.equals("Volviendo a la base", naveEnAtaque.ultimoMensaje())
+		assert.equals(15000, naveEnAtaque.velocidad())
+
+	
+		naveEnReposo.prepararseParaViaje()
+		assert.equals("Saliendo en mision", naveEnReposo.ultimoMensaje())	
+		assert.equals(ataque, naveEnReposo.modo())
+		assert.equals(15000, naveEnReposo.velocidad())
+	}
+
 }
+
+describe "Nave de Carga Radiactiva" {
+
+	const naveRadiactivaLlena = new NaveDeCargaRadiactiva(carga = 5000, 
+		velocidad = 10000)
+	
+	test "nave sellada" {
+		assert.notThat(naveRadiactivaLlena.sellada())
+		naveRadiactivaLlena.sellarse()
+		assert.that(naveRadiactivaLlena.sellada())
+		naveRadiactivaLlena.recibirAmenaza()
+		assert.equals(5000, naveRadiactivaLlena.carga())
+		assert.equals(0, naveRadiactivaLlena.velocidad())
+	}
+
+	test "prepararse para el viaje"{
+		const naveERadiactivanReposo = new NaveDeCargaRadiactiva(carga = 5000, velocidad = 0)
+		assert.notThat(naveERadiactivanReposo.sellada())
+		naveERadiactivanReposo.prepararseParaViaje()
+		assert.that(naveERadiactivanReposo.sellada())
+		assert.equals(15000, naveERadiactivanReposo.velocidad())
+	}
+}
+
+
+
